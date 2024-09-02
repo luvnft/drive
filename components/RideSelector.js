@@ -1,7 +1,9 @@
+import Image from 'next/image';
 import { useEffect, useContext, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import * as turf from '@turf/turf';
 import { UberContext } from '../context/uberContext';
+import ethLogo from '../assets/eth-logo.png';
 
 const style = {
   wrapper: `h-full flex flex-col`,
@@ -38,7 +40,7 @@ const RideSelector = () => {
         console.error("Failed to fetch ride types:", error);
       }
     })();
-  }, []);
+  }, [setSelectedRide]);
 
   useEffect(() => {
     const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;

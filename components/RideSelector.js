@@ -1,9 +1,9 @@
-import Image from 'next/image'
-import ethLogo from '../assets/eth-logo.png'
-import { useEffect, useContext, useState } from 'react'
-import { UberContext } from '../context/uberContext'
-import mapboxgl from 'mapbox-gl'
-import * as turf from '@turf/turf'
+import Image from 'next/image';
+import ethLogo from '../assets/eth-logo.png';
+import { useEffect, useContext, useState } from 'react';
+import { UberContext } from '../context/uberContext';
+import mapboxgl from 'mapbox-gl';
+import * as turf from '@turf/turf';
 
 const style = {
   wrapper: `h-full flex flex-col`,
@@ -17,69 +17,79 @@ const style = {
   time: `text-xs text-blue-500`,
   priceContainer: `flex items-center`,
   price: `mr-[-0.8rem]`,
-}
+};
 
-mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
+mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
 const RideSelector = () => {
-  const [carList, setCarList] = useState([])
-  const { selectedRide, setSelectedRide, setPrice, basePrice,  pickupCoordinates, dropoffCoordinates } =
-    useContext(UberContext)
+  const [carList, setCarList] = useState([]);
+  const { selectedRide, setSelectedRide, setPrice, basePrice, pickupCoordinates, dropoffCoordinates } =
+    useContext(UberContext);
+  const [distance, setDistance] = useState(null);
 
-    const [distance, setDistance] = useState(null);
-
-  
-  console.log(basePrice)
+  console.log(basePrice);
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       try {
-        const response = await fetch('/api/db/getRideTypes')
-
-        const data = await response.json()
-        setCarList(data.data)
-        setSelectedRide(data.data[0])
+        const response = await fetch('/api/db/getRideTypes');
+        const data = await response.json();
+        setCarList(data.data);
+        setSelectedRide(data.data[0]);
       } catch (error) {
-        console.error(error)
+        console.error("Failed to fetch ride types:", error);
       }
-    })()
-  }, [])
+    })();
+  }, []);
 
   useEffect(() => {
-    const map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/atl5d/cm0kb0y3u023x01qrfehze7qx',
-      center: [-74.3419, 39.6032],
-      zoom: 4,
-    })
+    const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
-    if (pickupCoordinates) {
-      addToMap(map, pickupCoordinates)
-    }
-
-    if (dropoffCoordinates) {
-      addToMap(map, dropoffCoordinates)
+    if (!accessToken) {
+      console.error("Mapbox access token is missing. Please set NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN in your environment variables.");
+      return;
     }
 
     if (pickupCoordinates && dropoffCoordinates) {
-      const distance = turf.distance(
-        turf.point(pickupCoordinates),
-        turf.point(dropoffCoordinates)
-      )
+      // Initialize Map only if coordinates are available
+      const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/atl5d/cm0kb0y3u023x01qrfehze7qx',
+        center: [-74.3419, 39.6032],
+        zoom: 12,
+      });
 
-      console.log('Distance:', distance)
-      setDistance(distance);
-      
-      map.fitBounds([dropoffCoordinates, pickupCoordinates], {
-        padding: 400,
-      })
+      const addToMap = (map, coordinates) => {
+        if (coordinates) {
+          new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
+        }
+      };
+
+      addToMap(map, pickupCoordinates);
+      addToMap(map, dropoffCoordinates);
+
+      const calculateDistance = () => {
+        if (pickupCoordinates && dropoffCoordinates) {
+          const distance = turf.distance(
+            turf.point(pickupCoordinates),
+            turf.point(dropoffCoordinates)
+          );
+          console.log('Distance:', distance);
+          setDistance(distance);
+          map.fitBounds([dropoffCoordinates, pickupCoordinates], {
+            padding: 400,
+          });
+        }
+      };
+
+      calculateDistance();
+
+      // Cleanup on unmount
+      return () => {
+        if (map) map.remove();
+      };
     }
-  }, [pickupCoordinates, dropoffCoordinates])
-
-  const addToMap = (map, coordinates) => {
-    const marker1 = new mapboxgl.Marker().setLngLat(coordinates).addTo(map)
-  }
-
+  }, [pickupCoordinates, dropoffCoordinates]);
 
   return (
     <div className={style.wrapper}>
@@ -94,8 +104,8 @@ const RideSelector = () => {
                 : style.car
             }`}
             onClick={() => {
-              setSelectedRide(car)
-              setPrice(((basePrice / 10 ** 5) * car.priceMultiplier).toFixed(5))
+              setSelectedRide(car);
+              setPrice(((basePrice / 10 ** 5) * car.priceMultiplier).toFixed(5));
             }}
           >
             <Image
@@ -117,14 +127,14 @@ const RideSelector = () => {
             </div>
             <div className={style.priceContainer}>
               <div className={style.price} id='map'>
-                {(distance).toFixed(1)}  km
+                {distance ? `${distance.toFixed(1)} km` : "Distance not available"}
               </div>
             </div>
           </div>
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default RideSelector
+export default RideSelector;

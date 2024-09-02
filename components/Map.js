@@ -1,7 +1,6 @@
 import { useEffect, useContext } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { UberContext } from '../context/uberContext';
-import MapboxDirections from '@mapbox/mapbox-sdk/services/directions';
 
 const style = {
   wrapper: `flex-1 h-full w-full absolute bottom-0`,
@@ -12,7 +11,7 @@ const Map = () => {
 
   useEffect(() => {
     const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
-    
+
     if (!accessToken) {
       console.error("Mapbox access token is missing. Please set NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN in your environment variables.");
       return;
@@ -22,8 +21,8 @@ const Map = () => {
 
     const map = new mapboxgl.Map({
       container: 'map',
-      style: 'mapbox://styles/atl5d/cm0kb0y3u023x01qrfehze7qx',
-      center: [-74.3419, 39.6032], // Centered on Atlanta, Georgia
+      style: 'mapbox://styles/atl5d/cm0kb0y3u023x01qrfehze7qx', // Custom Mapbox style
+      center: [-74.3419, 39.6032], // Centered on Tuckerton, NJ
       zoom: 12,
     });
 
@@ -46,7 +45,9 @@ const Map = () => {
   }, [pickupCoordinates, dropoffCoordinates]);
 
   const addToMap = (map, coordinates) => {
-    new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
+    if (coordinates) {
+      new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
+    }
   };
 
   return <div className={style.wrapper} id='map' />;

@@ -76,7 +76,7 @@ const Confirm = () => {
               storeTripDetails(pickup, dropoff);
             }}
           >
-            Confirm {selectedRide.service || "UberX"}
+            Confirm {selectedRide.service || "CAB"}
           </div>
         </div>
       </div>

@@ -26,7 +26,7 @@ const Navbar = () => {
   return (
     <nav className="flex flex-row justify-between md:justify-around items-center bg-black text-white h-16 fixed z-50 w-full">
     <section className="text-lg md:text-3xl cursor-pointer font-bold p-5">
-      <Link href={"/"}>Uber3.0</Link>
+      <Link href={"/"}>CAB</Link>
     </section>
     <section
       className="bg-black hidden md:flex md:items-center absolute right-0 top-16 md:static w-1/2 md:w-fit"

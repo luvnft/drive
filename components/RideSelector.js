@@ -1,9 +1,7 @@
-import Image from 'next/image';
-import ethLogo from '../assets/eth-logo.png';
 import { useEffect, useContext, useState } from 'react';
-import { UberContext } from '../context/uberContext';
 import mapboxgl from 'mapbox-gl';
 import * as turf from '@turf/turf';
+import { UberContext } from '../context/uberContext';
 
 const style = {
   wrapper: `h-full flex flex-col`,
@@ -50,8 +48,16 @@ const RideSelector = () => {
       return;
     }
 
+    const mapContainer = document.getElementById('map');
+    if (!mapContainer) {
+      console.error("Map container element not found.");
+      return;
+    }
+
+    // Clear previous content
+    mapContainer.innerHTML = '';
+
     if (pickupCoordinates && dropoffCoordinates) {
-      // Initialize Map only if coordinates are available
       const map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/atl5d/cm0kb0y3u023x01qrfehze7qx',

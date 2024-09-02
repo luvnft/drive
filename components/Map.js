@@ -22,9 +22,9 @@ const Map = () => {
 
     const map = new mapboxgl.Map({
       container: 'map',
-      style: 'mapbox://styles/coderweb3/clgqlo13q00jk01qy2cgb77z8',
-      center: [-84.3880, 33.7490], // Centered on Atlanta, Georgia
-      zoom: 10,
+      style: 'mapbox://styles/atl5d/cm0kb0y3u023x01qrfehze7qx',
+      center: [-74.3419, 39.6032], // Centered on Atlanta, Georgia
+      zoom: 12,
     });
 
     if (pickupCoordinates) {

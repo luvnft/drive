@@ -48,8 +48,8 @@ const RideSelector = () => {
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: 'map',
-      style: 'mapbox://styles/coderweb3/clgqlo13q00jk01qy2cgb77z8',
-      center: [-.2, 39.39],
+      style: 'mapbox://styles/atl5d/cm0kb0y3u023x01qrfehze7qx',
+      center: [-74.3419, 39.6032],
       zoom: 4,
     })
 
